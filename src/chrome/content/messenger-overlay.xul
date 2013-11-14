@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/.
+   - Portions Copyright (C) Philipp Kewisch, 2013 -->
+
+<?xml-stylesheet type="text/css" href="chrome://obmdeveloper/skin/messenger.css"?>
+
+<!DOCTYPE overlay [
+  <!ENTITY % obmDTD SYSTEM "chrome://obm-extension/locale/obm.dtd"> %obmDTD;
+  <!ENTITY % obmdevDTD SYSTEM "chrome://obmdeveloper/locale/obmdev.dtd"> %obmdevDTD;
+  <!ENTITY % identityEditDTD SYSTEM "chrome://messenger/locale/am-identity-edit.dtd"> %identityEditDTD;
+  <!ENTITY % advancedPrefsDTD SYSTEM "chrome://messenger/locale/preferences/advanced.dtd"> %advancedPrefsDTD;
+]>
+
+<overlay id="messenger-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/javascript" src="chrome://obmdeveloper/content/messenger-overlay.js"/>
+  <toolbar id="tabbar-toolbar">
+    <toolbarbutton id="obm-user-toolbarbutton"
+                   class="toolbarbutton-1"
+                   type="menu"
+                   label="&lt;None&gt;"
+                   insertbefore="calendar-tab-button,task-tab-button">
+      <menupopup onpopupshowing="obmdev.toolbarPopupShowing()">
+        <menuitem id="obm-dev-reset" label="&obm.prefs.reset;" oncommand="OBM_Reset(true)"/>
+        <menuitem id="obm-dev-purge" label="&obm.prefs.purge;" oncommand="OBM_Purge()"/>
+        <menuitem id="obm-dev-import" label="&obm.prefs.import;" oncommand="OBM_ImportCalendars()"/>
+        <menuitem id="obm-dev-log" label="&obm.prefs.log;" oncommand="OBM_ShowLog()"/>
+        <menuitem id="obm-dev-su-rights" label="&obm.prefs.syncAndUpdateRights;" oncommand="OBM_SyncAndUpdateRights()"/>
+        <menuseparator id="obm-dev-window-sep"/>
+        <menuitem id="obm-dev-connection" label="&obm.prefs.connection.button;" oncommand="UtilsOBM.showWindow('preferences/connection.xul', window)"/>
+        <menuitem id="obm-dev-synchronization" label="&obm.prefs.synchronization.button;" oncommand="UtilsOBM.showWindow('preferences/synchronization.xul', window)"/>
+        <menuitem id="obm-dev-subscriptions" label="&obm.prefs.subscription.button;" oncommand="UtilsOBM.showWindow('preferences/subscription.xul', window)"/>
+        <menuseparator id="obm-dev-prefs-sep"/>
+        <menu id="obm-dev-prefs" label="&settingsTab.label;">
+          <menupopup id="obm-dev-prefs-popup" onpopupshowing="obmdev.initPrefsMenu()">
+            <menuitem id="obm-dev-config-editor" label="&configEdit.label;" oncommand="openDialog('about:config')"/>
+            <menuseparator id="obm-dev-config-sep"/>
+          </menupopup>
+        </menu>
+        <menuitem id="obm-dev-proactive" label="&obm.synchronization.proactivesync;" type="checkbox" oncommand="obmdev.flipPref('extensions.obm.proactiveSync')"/>
+      </menupopup>
+    </toolbarbutton>
+  </toolbar>
+</overlay>

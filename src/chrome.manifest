@@ -1,0 +1,4 @@
+content obmdeveloper chrome/content/
+locale obmdeveloper en-US chrome/locales/en-US/
+skin obmdeveloper classic/1.0 chrome/skin/
+overlay chrome://messenger/content/messenger.xul chrome://obmdeveloper/content/messenger-overlay.xul
