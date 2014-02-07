@@ -40,7 +40,16 @@ var obmdev = (function() {
   }
   window.addEventListener("load", setupUserLabel, false);
 
-
+  // Startup in selected mode, if set by preference
+  function startupShowView() {
+    let tabmail = document.getElementById("tabmail");
+    let initialTabMode = Services.prefs.getCharPref("extensions.obmdeveloper.initialTab");
+    if (initialTabMode) {
+      let tab = tabmail.openTab(initialTabMode, {});
+      tabmail.setTabTitle(tab);
+    }
+  }
+  Services.obs.addObserver({ observe: startupShowView }, "mail-tabs-session-restored", false);
 
   function setChecked(id, val) {
     if (val) {
