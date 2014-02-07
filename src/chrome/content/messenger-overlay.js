@@ -1,7 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- * Portions Copyright (C) Philipp Kewisch, 2013 */
+ * Portions Copyright (C) Philipp Kewisch, 2013-2014 */
+
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 var obmdev = (function() {
   const PREF_STRING = Components.interfaces.nsIPrefBranch.PREF_STRING;
@@ -10,30 +12,35 @@ var obmdev = (function() {
   const PREF_INVALID = Components.interfaces.nsIPrefBranch.PREF_INVALID;
 
   // Get the login name for display
-  let logins = Services.logins.findLogins({}, "obm-obm-obm", null, "obm-obm-obm");
-  let username;
-  if (logins && logins.length) {
-    username = logins[0].username;
-  }
-
-  // Set up username label
-  let button = document.getElementById("obm-user-toolbarbutton");
-  button.setAttribute("label", username || "<None>"); // L10N
-
-  // Set up dock icon, if supported. Will only show when there is at least 1
-  // unread message.
-  if ("@mozilla.org/widget/macdocksupport;1" in Components.classes) {
-    function updateBadgeText() {
-      let dockSupport = Components.classes["@mozilla.org/widget/macdocksupport;1"]
-                                  .getService(Components.interfaces.nsIMacDockSupport);
-      dockSupport.badgeText = username;
+  function setupUserLabel() {
+    let logins = Services.logins.findLogins({}, "obm-obm-obm", null, "obm-obm-obm");
+    let username;
+    if (logins && logins.length) {
+      username = logins[0].username;
     }
 
-    Services.obs.addObserver({
-      observe: function() setTimeout(updateBadgeText, 0)
-    },"before-unread-count-display", false);
-    updateBadgeText();
+    // Set up username label
+    let button = document.getElementById("obm-user-toolbarbutton");
+    button.setAttribute("label", username || "<None>"); // L10N
+
+    // Set up dock icon, if supported. Will only show when there is at least 1
+    // unread message.
+    if ("@mozilla.org/widget/macdocksupport;1" in Components.classes) {
+      function updateBadgeText() {
+        let dockSupport = Components.classes["@mozilla.org/widget/macdocksupport;1"]
+                                    .getService(Components.interfaces.nsIMacDockSupport);
+        dockSupport.badgeText = username;
+      }
+
+      Services.obs.addObserver({
+        observe: function() setTimeout(updateBadgeText, 0)
+      },"before-unread-count-display", false);
+      updateBadgeText();
+    }
   }
+  window.addEventListener("load", setupUserLabel, false);
+
+
 
   function setChecked(id, val) {
     if (val) {
@@ -47,7 +54,6 @@ var obmdev = (function() {
     Services.prefs.setBoolPref(prefName, !Services.prefs.getBoolPref(prefName));
   }
   function promptPref(prefName) {
-    Components.utils.reportError("Prompt: " + prefName);
     let pt = Services.prefs.getPrefType(prefName);
     let val, res;
     switch (pt) {
